@@ -77,4 +77,20 @@ public class CardDeliveryTest {
                 shouldHave(exactText("Имя и Фамилия указаные неверно. " +
                         "Допустимы только русские буквы, пробелы и дефисы."));
     }
+    @Test
+    void shouldNameAndCityIsInvalid () {
+        RegistrationByDate newUser = DataGenerator.Registration.generateByDate("ru");
+        String invalidCity = DataGenerator.Registration.generateInvalidCity();
+        String invalidName = DataGenerator.Registration.generateInvalidName();
+        open("http://localhost:9999");
+        $("[data-test-id=city] [placeholder=Город]").setValue(invalidCity);
+        $("[placeholder='Дата встречи']").doubleClick().sendKeys(Keys.BACK_SPACE);
+        $("[placeholder='Дата встречи']").setValue(newUser.getDataOfMeeting());
+        $("[data-test-id='name'] .input__control").setValue(invalidName);
+        $("[data-test-id='phone'] .input__control").setValue(newUser.getPhoneNumber());
+        $("[data-test-id='agreement'] .checkbox__box").click();
+        $$("[type='button']").find(exactText("Запланировать")).click();
+        $(".input_invalid[data-test-id=city] .input__sub").
+                shouldHave(exactText("Доставка в выбранный город недоступна"));
+    }
 }
