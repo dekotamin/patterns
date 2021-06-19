@@ -1,6 +1,10 @@
 package ru.netology.test;
 
 import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.logevents.SelenideLogger;
+import io.qameta.allure.selenide.AllureSelenide;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Keys;
 import ru.netology.data.DataGenerator;
@@ -13,6 +17,15 @@ import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.*;
 
 public class CardDeliveryTest {
+
+    @BeforeAll
+    static void setUpAll() {
+        SelenideLogger.addListener("allure", new AllureSelenide());
+    }
+    @AfterAll
+    static void tearDownAll() {
+        SelenideLogger.removeListener("allure");
+    }
 
     @Test
     void shouldCityAndNameAreValid () {
@@ -74,8 +87,7 @@ public class CardDeliveryTest {
         $("[data-test-id='agreement'] .checkbox__box").click();
         $$("[type='button']").find(exactText("Запланировать")).click();
         $(".input_invalid[data-test-id=name] .input__sub").
-                shouldHave(exactText("Имя и Фамилия указаные неверно. " +
-                        "Допустимы только русские буквы, пробелы и дефисы."));
+                shouldHave(exactText("Имя и Фамилия указаные неверно. " + "Допустимы только русские буквы, пробелы и дефисы."));
     }
     @Test
     void shouldNameAndCityIsInvalid () {
